@@ -17,12 +17,12 @@ class Uploader
       next if path.directory?
 
       upload_path = "#{prefix}/#{path.relative_path_from(dir_path)}"
-      upload( path.to_s, upload_path )
+      upload( path, upload_path )
     end
   end
 
   def upload( local_path, remote_path )
-    puts "Uploading #{local_path} to #{remote_path}"
+    puts "Uploading #{local_path} to #{bucket.name}::#{remote_path}"
 
     object = bucket.objects.build(remote_path)
     object.content = File.open(local_path)
@@ -48,14 +48,14 @@ class Uploader
   end
 
   def bucket
-    @bucket ||=
-      (connection.buckets.find(ENV['S3_BUCKET']) || create_bucket)
+    @bucket ||= _get_or_create_bucket
   end
 
-  def create_bucket
-    _bucket = connection.buckets.build(ENV['S3_BUCKET'])
+  def _get_or_create_bucket
+    connection.buckets.find(ENV['S3_BUCKET'])
+  rescue S3::Error::NoSuchBucket
+    _bucket = connection.buckets.build( ENV['S3_BUCKET'] )
     _bucket.save
     _bucket
   end
-
 end
