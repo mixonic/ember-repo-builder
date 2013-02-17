@@ -4,15 +4,19 @@ require 'pathname'
 class Uploader
   ENV_CREDS = %w(S3_ACCESS_KEY S3_SECRET_KEY S3_BUCKET)
 
-  def initialize
+  attr_accessor :is_pretend
+
+  def initialize(options={})
     self.class.require_env_creds
+
+    @is_pretend = options.fetch(:is_pretend, false)
   end
 
   def upload_dir_recursively(dir, options={})
     prefix = options[:prefix] || 'uploads'
     dir_path = Pathname.new(dir)
 
-    Dir[dir + '/**'].each do |path|
+    Dir[dir + '/**/*'].each do |path|
       path = Pathname.new(path)
       next if path.directory?
 
@@ -24,6 +28,7 @@ class Uploader
   def upload( local_path, remote_path )
     puts "Uploading #{local_path} to #{bucket.name}::#{remote_path}"
 
+    return if is_pretend
     object = bucket.objects.build(remote_path)
     object.content = File.open(local_path)
     object.save
