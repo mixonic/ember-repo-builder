@@ -3,7 +3,7 @@ require './lib/overalls'
 
 class Overalls < Sinatra::Base
   get '/' do
-    'hello world'
+    erb :index
   end
 
   get '/build' do
