@@ -6,3 +6,6 @@ gem 'capistrano'
 gem 'bundler'
 gem 'sinatra'
 gem 's3'
+
+gem 'redis'
+gem 'redis-namespace'

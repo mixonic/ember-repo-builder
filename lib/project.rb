@@ -6,6 +6,10 @@ class Project
     new(ember_options)
   end
 
+  def self.sorted(project_name, persistence=Persistence.new)
+    persistence.sorted(project_name)
+  end
+
   def initialize(options={})
     @repo         = options[:repo]      # github repo name
     @owner        = options[:owner]     # github owner name
