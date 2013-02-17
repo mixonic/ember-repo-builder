@@ -12,11 +12,13 @@ class Uploader
     @is_pretend = options.fetch(:is_pretend, false)
   end
 
-  def upload_dir_recursively(dir, options={})
+  def upload_recursively(dir, options={})
     prefix = options[:prefix] || 'uploads'
+    glob   = options[:glob]   || '**/*'
+
     dir_path = Pathname.new(dir)
 
-    Dir[dir + '/**/*'].each do |path|
+    Dir[dir + '/' + glob].each do |path|
       path = Pathname.new(path)
       next if path.directory?
 
