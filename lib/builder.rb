@@ -4,7 +4,7 @@ require 'bundler'
 require 'forwardable'
 
 class Builder
-  attr_reader :work_dir, :is_latest
+  attr_reader :work_dir, :is_latest, :revision
 
   extend Forwardable
 
@@ -31,6 +31,20 @@ class Builder
     end
   end
 
+  def save(persistence=Persistence.new)
+    key = "build:#{name}:#{revision}"
+    timestamp = Time.now.to_i
+
+    persistence.save(
+      key,
+      { revision:  revision,
+        name:      name,
+        timestamp: timestamp })
+    persistence.score(group=name,
+                      member=key,
+                      score=timestamp)
+  end
+
   private
 
   def setup_work_dir
@@ -39,6 +53,7 @@ class Builder
 
   def checkout_code
     exec "git clone #{git_url} --depth=1 #{work_dir}"
+    @revision = current_revision
   end
 
   def bundle
@@ -69,7 +84,7 @@ class Builder
   end
 
   def build_prefix(suffix=nil)
-    suffix ||= current_revision
+    suffix ||= revision
     "builds/#{project_name}/#{suffix}"
   end
 
@@ -79,7 +94,6 @@ class Builder
 
   def current_revision
     Dir.chdir(work_dir)
-
     exec('git rev-parse HEAD').strip
   end
 
