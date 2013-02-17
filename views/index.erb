@@ -97,18 +97,25 @@
         <p>We take each commit to <a href="https://github.com/emberjs/ember.js">Ember.js</a> and build ready-to-include files. Use them to see if your bug is still present on master. We suggest <a href="http://jsfiddle.net/">jsfiddle</a> to check for a bug.</p>
       </header>
 
-      <div class="revision">
-        <p>
-          3d2f2d32d
-          [<a href="https://github.com/emberjs/ember.js/commit/3d2f2d32d">GitHub</a>]
-          @ 2013-02-15 12:16:20 EST
-        </p>
-        <ul>
-          <li><a href="#">ember.js</a></li>
-          <li><a href="#">handlebars.js</a></li>
-          <li><a href="#">ember-runtime.js</a></li>
-        </ul>
-      </div>
+      <% @projects.each do |project_data| %>
+        <div class="revision">
+          <p>
+            <%= project_data['revision'] %>
+            [<a href="https://github.com/emberjs/ember.js/commit/<%= project_data['revision'] %>">GitHub</a>]
+            @ <%= Time.at(project_data['timestamp']) %>
+          </p>
+          <ul>
+            <% @project_files.each do |filename, filepath| %>
+              <li>
+                <a href="<%= url_from_project(project_data, filepath) %>">
+                  <%= filename %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
 
       <div class="revision">
         <p>

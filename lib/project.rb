@@ -4,6 +4,12 @@ class Project
   attr_accessor :name, :build_dir,
     :build_task, :build_glob, :repo, :owner
 
+  EMBER_FILES = [
+    ['ember.js', 'ember.js'],
+    ['handlebars.js', 'modules/handlebars.js'],
+    ['ember-runtime.js', 'ember-runtime.js']
+  ]
+
   def self.ember
     new(ember_options)
   end
@@ -36,8 +42,7 @@ class Project
       owner: 'emberjs',
       build_dir: 'dist',
       build_task: 'dist',
-      is_latest: true,
-      build_glob: '**'
+      is_latest: true
     }
   end
 end
