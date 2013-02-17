@@ -1,3 +1,5 @@
+require 'json'
+
 class Project
   attr_accessor :name, :build_dir,
     :build_task, :build_glob, :repo, :owner
@@ -25,6 +27,8 @@ class Project
   def git_url
     "https://github.com/#{owner}/#{repo}.git"
   end
+
+  private
 
   def self.ember_options
     {

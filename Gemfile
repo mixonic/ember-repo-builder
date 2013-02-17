@@ -9,3 +9,5 @@ gem 's3'
 
 gem 'redis'
 gem 'redis-namespace'
+
+gem 'json'
