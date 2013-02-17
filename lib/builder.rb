@@ -4,7 +4,7 @@ require 'bundler'
 
 class Builder
   attr_reader :work_dir, :project_name, :git_url,
-    :build_dir, :build_task, :is_latest
+    :build_dir, :build_task, :is_latest, :build_glob
 
   def initialize( options=nil )
     options ||= ember_options
@@ -14,6 +14,7 @@ class Builder
     @build_dir    = options[:build_dir]
     @build_task   = options[:build_task]
     @is_latest    = options[:is_latest]
+    @build_glob   = options[:build_glob]
   end
 
   def run
@@ -31,7 +32,8 @@ class Builder
       git_url: 'https://github.com/emberjs/ember.js.git',
       build_dir: 'dist',
       build_task: 'dist',
-      is_latest: true
+      is_latest: true,
+      build_glob: '**'
     }
   end
 
@@ -60,14 +62,15 @@ class Builder
   def upload(uploader=Uploader.new)
     Dir.chdir(work_dir)
 
-    uploader.upload_dir_recursively(
-      build_dir,
-      prefix: build_prefix)
+    upload_options = {
+      prefix: build_prefix,
+      glob:   build_glob
+    }
+    uploader.upload_recursively(build_dir, upload_options)
 
     if is_latest
-      uploader.upload_dir_recursively(
-        build_dir,
-        prefix: build_prefix('latest'))
+      upload_options.merge!( prefix: build_prefix('latest') )
+      uploader.upload_recursively( build_dir, upload_options )
     end
   end
 
