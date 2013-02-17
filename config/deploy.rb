@@ -1,4 +1,4 @@
-load "deploy/assets"
+# load "deploy/assets"
 
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
@@ -14,11 +14,13 @@ set :user, "deploy"
 set :user_rails, "rails"
 
 # App Domain
-set :domain, "myapp.com"
+set :domain, "ember-repo-builder.madhatted.com"
 
 set :default_environment, {
   'PATH' => "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
 }
+
+default_run_options[:pty] = true
 
 # We don't want to use sudo (root) - for security reasons
 set :use_sudo, false
@@ -45,14 +47,14 @@ after "deploy:setup", "deploy:fix_setup_permissions"
 # Fix permissions
 before "deploy:start", "deploy:fix_permissions"
 after "deploy:restart", "deploy:fix_permissions"
-after "assetsrecompile", "deploy:fix_permissions"
+# after "assetsrecompile", "deploy:fix_permissions"
 
 # Clean-up old releases
 after "deploy:restart", "deploy:cleanup"
 
 # Unicorn config
-set :unicorn_config, "#{current_path}/config/unicorn.conf.rb"
-set :unicorn_binary, "bash -c 'bundle exec unicorn_rails -c #{unicorn_config} -E #{rails_env} -D'"
+set :unicorn_config, "#{current_path}/config/unicorn.rb"
+set :unicorn_binary, "bash -c 'bundle exec unicorn -c #{unicorn_config} -E #{rails_env} -D'"
 set :unicorn_pid, "#{current_path}/tmp/pids/unicorn.pid"
 set :su_rails, "sudo -u #{user_rails}"
 
@@ -94,22 +96,28 @@ namespace :deploy do
     run "#{sudo} find #{current_path}/tmp/ -exec chown #{user}:#{user_rails} {} \\;"
   end
 
-  # Precompile assets only when needed
-  namespace :assets do
-    task :precompile, :roles => :web, :except => { :no_release => true } do
-      # If this is our first deploy - don't check for the previous version
-      if remote_file_exists?(current_path)
-        from = source.next_revision(current_revision)
-        if capture("cd #{latest_release} && #{source.local.log(from)} vendor/assets/ app/assets/ | wc -l").to_i > 0
-          run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assetsrecompile}
-        else
-          logger.info "Skipping asset pre-compilation because there were no asset changes"
-        end
-      else
-        run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assetsrecompile}
-      end
-    end
+  # This will make sure that Capistrano doesn't try to run rake:migrate (this is not a Rails project!)
+  task :cold do
+    deploy.update
+    deploy.start
   end
+
+  # Precompile assets only when needed
+  # namespace :assets do
+  #   task :precompile, :roles => :web, :except => { :no_release => true } do
+  #     # If this is our first deploy - don't check for the previous version
+  #     if remote_file_exists?(current_path)
+  #       from = source.next_revision(current_revision)
+  #       if capture("cd #{latest_release} && #{source.local.log(from)} vendor/assets/ app/assets/ | wc -l").to_i > 0
+  #         run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assetsrecompile}
+  #       else
+  #         logger.info "Skipping asset pre-compilation because there were no asset changes"
+  #       end
+  #     else
+  #       run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assetsrecompile}
+  #     end
+  #   end
+  # end
 end
 
 # Helper function

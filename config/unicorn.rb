@@ -11,7 +11,9 @@ listen "#{@app}/tmp/sockets/unicorn.sock", :backlog => 64
 timeout 30
 
 # App PID
-pid "#{@app}/tmp/pids/unicorn.pid"
+pid_file = "#{@app}/tmp/pids/unicorn.pid"
+pid pid_file
+old_pid = "#{pid_file}.oldbin"
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, some applications/frameworks log to stderr or stdout,
@@ -31,14 +33,13 @@ before_exec do |_|
 end
 
 before_fork do |server, worker|
-  # the following is highly recomended for Rails + "preload_app true"
-  # as there's no need for the master process to hold a connection
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.connection.disconnect!
-end
-
-after_fork do |server, worker|
-  # the following is *required* for Rails + "preload_app true",
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.establish_connection
+  # zero downtime deploy magic:
+  # if unicorn is already running, ask it to start a new process and quit.
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
 end
