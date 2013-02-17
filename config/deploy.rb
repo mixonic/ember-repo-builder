@@ -54,7 +54,7 @@ after "deploy:restart", "deploy:cleanup"
 
 # Unicorn config
 set :unicorn_config, "#{current_path}/config/unicorn.rb"
-set :unicorn_binary, "bash -c 'bundle exec unicorn -c #{unicorn_config} -E #{rails_env} -D'"
+set :unicorn_binary, "bash -c 'source ~/.profile; bundle exec unicorn -c #{unicorn_config} -E #{rails_env} -D'"
 set :unicorn_pid, "#{current_path}/tmp/pids/unicorn.pid"
 set :su_rails, "sudo -u #{user_rails}"
 

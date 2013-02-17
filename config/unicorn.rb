@@ -5,7 +5,7 @@ worker_processes 4
 @app = "/var/rails/ember-repo-builder/current"
 
 # Listen on fs socket for better performance
-listen "#{@app}/tmp/sockets/unicorn.sock", :backlog => 64
+listen "/tmp/sockets/unicorn.sock", :backlog => 64
 
 # Nuke workers after 30 seconds instead of 60 seconds (the default)
 timeout 30
