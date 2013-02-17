@@ -8,7 +8,9 @@ class Overalls < Sinatra::Base
 
   get '/build' do
     start_at = Time.now
-    puts Builder.new.run
+    Thread.new do
+      puts Builder.new.run
+    end
     "Built in #{Time.now - start_at}s"
   end
 end

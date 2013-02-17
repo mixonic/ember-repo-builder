@@ -1,40 +1,34 @@
 require 'fileutils'
 require 'tmpdir'
 require 'bundler'
+require 'forwardable'
 
 class Builder
-  attr_reader :work_dir, :project_name, :git_url,
-    :build_dir, :build_task, :is_latest, :build_glob
+  attr_reader :work_dir, :is_latest
 
-  def initialize( options=nil )
-    options ||= ember_options
+  extend Forwardable
 
-    @project_name = options[:project_name]
-    @git_url      = options[:git_url]
-    @build_dir    = options[:build_dir]
-    @build_task   = options[:build_task]
+  def_delegators :@project,
+    :name, :git_url, :build_dir, :build_task, :build_glob
+
+  def_delegator :@project, :name, :project_name
+
+  def initialize( project=nil, options={} )
+    @project ||= Project.ember
+
     @is_latest    = options[:is_latest]
-    @build_glob   = options[:build_glob]
   end
 
   def run
     setup_work_dir
-    checkout_code
-    bundle
-    build
-    upload
-    cleanup
-  end
-
-  def ember_options
-    {
-      project_name: 'ember.js',
-      git_url: 'https://github.com/emberjs/ember.js.git',
-      build_dir: 'dist',
-      build_task: 'dist',
-      is_latest: true,
-      build_glob: '**'
-    }
+    begin
+      checkout_code
+      bundle
+      build
+      upload
+    ensure
+      cleanup
+    end
   end
 
   private
@@ -80,7 +74,7 @@ class Builder
   end
 
   def cleanup
-    FileUtils.remove_entry_secure(work_dir)
+    FileUtils.remove_entry_secure(work_dir) if work_dir
   end
 
   def current_revision
@@ -90,9 +84,9 @@ class Builder
   end
 
   def exec(cmd)
-    puts cmd
+    puts "Exec: #{cmd}"
     val = Bundler.with_clean_env{ `#{cmd}` }
-    puts val
+    puts "Result: #{val}"
     val
   end
 end
