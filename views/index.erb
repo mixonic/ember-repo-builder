@@ -13,14 +13,17 @@
         font-family: Garamond;
         color: #f5f4f4;
         color: #e3e3e2;
-        margin-bottom: 21px;
-
+      }
+      h1 {
+        text-align: center;
         font-size: 2.4rem;
         line-height: 1.17;
+        margin-bottom: 42px;
       }
       h2 {
         font-size: 2.0rem;
         line-height: 1.17;
+        margin-bottom: 21px;
       }
       p, pre {
         font-size: 1.0rem;
@@ -38,7 +41,7 @@
       }
       section[role=main] {
         width: 726px;
-        margin: 42px auto 42px;
+        margin: 52px auto 42px;
         padding: 0 21px 0;
       }
       @media only screen and (max-width: 768px) {
@@ -55,16 +58,29 @@
       a:active {
         color: #DE8383;
       }
+      ul {
+        margin: 0 0 0 21px;
+        padding: 0;
+      }
+      li {
+        margin: 0;
+        padding: 0;
+        line-height: 1.4; /* Magic number is 21px */
+      }
+      footer p {
+        font-style: italic;
+        color: #c3c3c2;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
     <section role="main">
       <header>
         <h1>Builds from the Ember repo</h1>
-      <hr />
-        <p>Use these recent builds of Ember to see if your bug is still present on master. We suggest <a href="http://jsfiddle.net/">jsfiddle</a> to check for a bug.</p>
+        <hr />
+        <p>We take each commit to <a href="https://github.com/emberjs/ember.js">Ember.js</a> and build the ready-to-use files. Use them to see if your bug is still present on master. We suggest <a href="http://jsfiddle.net/">jsfiddle</a> to check for a bug.</p>
       </header>
-
 
       <div class="revision">
         <h2>3d2f2d32d</h2>
