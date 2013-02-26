@@ -28,7 +28,7 @@ class Uploader
   end
 
   def upload( local_path, remote_path )
-    puts "Uploading #{local_path} to #{bucket.name}::#{remote_path}"
+    puts "Uploading #{local_path} to S3 #{bucket.name}://#{remote_path}"
 
     return if is_pretend
     object = bucket.objects.build(remote_path)
