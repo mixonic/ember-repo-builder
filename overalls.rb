@@ -9,14 +9,13 @@ class Overalls < Sinatra::Base
   end
 
   get '/build' do
-    builder = Builder.new
-    Thread.new do
+    thread = Thread.new do
+      builder  = Builder.new
       start_at = Time.now
       puts builder.run
-      builder.save
       puts "Finished building at #{Time.now - start_at}s"
     end
-    "Scheduling build of #{builder.name}"
+    "Scheduling build."
   end
 
   helpers do

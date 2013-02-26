@@ -4,7 +4,7 @@ require 'bundler'
 require 'forwardable'
 
 class Builder
-  attr_reader :work_dir, :is_latest, :revision
+  attr_reader :work_dir, :is_latest, :revision, :commit_message
 
   extend Forwardable
 
@@ -26,6 +26,7 @@ class Builder
       bundle
       build
       upload
+      save
     ensure
       cleanup
     end
@@ -37,9 +38,10 @@ class Builder
 
     persistence.save(
       key,
-      { revision:  revision,
-        name:      name,
-        timestamp: timestamp })
+      { revision:       revision,
+        commit_message: commit_message,
+        name:           name,
+        timestamp:      timestamp })
     persistence.score(group=name,
                       member=key,
                       score=timestamp)
@@ -48,12 +50,14 @@ class Builder
   private
 
   def setup_work_dir
-    @work_dir = Dir.mktmpdir
+    @original_dir = Dir.pwd
+    @work_dir     = Dir.mktmpdir
   end
 
   def checkout_code
     exec "git clone #{git_url} --depth=1 #{work_dir}"
     @revision = current_revision
+    @commit_message = current_commit_message
   end
 
   def bundle
@@ -89,12 +93,18 @@ class Builder
   end
 
   def cleanup
+    Dir.chdir(@original_dir)
     FileUtils.remove_entry_secure(work_dir) if work_dir
   end
 
   def current_revision
     Dir.chdir(work_dir)
     exec('git rev-parse HEAD').strip
+  end
+
+  def current_commit_message
+    Dir.chdir(work_dir)
+    exec('git log --format=%B -n 1').strip
   end
 
   def exec(cmd)

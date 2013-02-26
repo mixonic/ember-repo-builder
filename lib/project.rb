@@ -1,8 +1,8 @@
 require 'json'
 
 class Project
-  attr_accessor :name, :build_dir,
-    :build_task, :build_glob, :repo, :owner
+  attr_accessor :build_dir, :build_task,
+    :build_glob, :repo, :owner
 
   EMBER_FILES = [
     ['ember.js', 'ember.js'],

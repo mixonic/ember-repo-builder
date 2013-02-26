@@ -104,6 +104,7 @@
             [<a href="https://github.com/emberjs/ember.js/commit/<%= project_data['revision'] %>">GitHub</a>]
             @ <%= Time.at(project_data['timestamp']) %>
           </p>
+          <p class='commit-message'><%= project_data['commit_message'] %></p>
           <ul>
             <% @project_files.each do |filename, filepath| %>
               <li>
@@ -123,6 +124,7 @@
           [<a href="https://github.com/emberjs/ember.js/commit/3d2f2d32d">GitHub</a>]
           @ 2013-02-15 12:16:20 EST
         </p>
+        <p class='commit-message'>Commit message</p>
         <ul>
           <li><a href="#">ember.js</a></li>
           <li><a href="#">handlebars.js</a></li>
