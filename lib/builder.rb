@@ -60,25 +60,26 @@ class Builder
     @commit_message = current_commit_message
   end
 
+  # FIXME
+  GEM_HOME="~/.rbenv/versions/2.0.0-rc2/lib/ruby/gems/2.0.0/"
+
   def bundle
     Dir.chdir(work_dir)
 
     exec 'mkdir gembundle'
-    exec 'bundle show'
-    exec 'bundle check'
-    exec 'bundle install --path gembundle'
+    exec "GEM_HOME=#{GEM_HOME} bundle install --path gembundle"
   end
 
   def build
     Dir.chdir(work_dir)
 
-    exec 'bundle show'
-    exec 'bundle check'
-    exec "bundle exec rake #{build_task}"
+    exec "GEM_HOME=#{GEM_HOME} PATH=PATH:/usr/local/bin bundle exec rake #{build_task}"
   end
 
   def upload(uploader=Uploader.new)
     Dir.chdir(work_dir)
+
+    exec 'env | grep S3'
 
     upload_options = {
       prefix: build_prefix,
