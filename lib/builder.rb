@@ -27,6 +27,8 @@ class Builder
       build
       upload
       save
+    rescue e
+      puts "Caught error: #{e.inspect}"
     ensure
       cleanup
     end
