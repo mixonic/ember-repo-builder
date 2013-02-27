@@ -73,7 +73,7 @@ class Builder
   def build
     Dir.chdir(work_dir)
 
-    exec "GEM_HOME=#{GEM_HOME} PATH=PATH:/usr/local/bin bundle exec rake #{build_task}"
+    exec "GEM_HOME=#{GEM_HOME} PATH=$PATH:/usr/local/bin bundle exec rake #{build_task}"
   end
 
   def upload(uploader=Uploader.new)
