@@ -63,12 +63,17 @@ class Builder
   def bundle
     Dir.chdir(work_dir)
 
-    exec 'bundle install'
+    exec 'mkdir gembundle'
+    exec 'bundle show'
+    exec 'bundle check'
+    exec 'bundle install --path gembundle'
   end
 
   def build
     Dir.chdir(work_dir)
 
+    exec 'bundle show'
+    exec 'bundle check'
     exec "bundle exec rake #{build_task}"
   end
 
