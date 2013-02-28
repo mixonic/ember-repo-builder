@@ -9,12 +9,7 @@ class Overalls < Sinatra::Base
   end
 
   get '/build' do
-    thread = Thread.new do
-      builder  = Builder.new
-      start_at = Time.now
-      puts builder.run
-      puts "Finished building at #{Time.now - start_at}s"
-    end
+    BuildWorker.perform_async
     "Scheduling build."
   end
 
