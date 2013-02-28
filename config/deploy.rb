@@ -21,6 +21,8 @@ set :default_environment, {
   'PATH' => "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
 }
 
+set (:bundle_cmd) { "#{release_path}/bin/bundle" }
+
 default_run_options[:pty] = true
 
 # We don't want to use sudo (root) - for security reasons
