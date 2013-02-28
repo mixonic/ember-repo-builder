@@ -52,7 +52,7 @@ before "deploy:start", "deploy:fix_permissions"
 after "deploy:restart", "deploy:fix_permissions"
 # after "assetsrecompile", "deploy:fix_permissions"
 
-after "deploy:symlink", "deploy:custom_symlinks"
+after "deploy:create_symlink", "deploy:custom_symlinks"
 
 # Clean-up old releases
 after "deploy:restart", "deploy:cleanup"
