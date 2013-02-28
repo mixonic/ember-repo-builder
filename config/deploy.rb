@@ -21,7 +21,7 @@ set :default_environment, {
   'PATH' => "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
 }
 
-set (:bundle_cmd) { "#{release_path}/bin/bundle" }
+set (:bundle_cmd) { "#{shared_path}/bin/bundle" }
 
 default_run_options[:pty] = true
 
