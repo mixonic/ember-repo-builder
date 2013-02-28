@@ -59,13 +59,13 @@ after "deploy:restart", "deploy:cleanup"
 
 # Unicorn config
 set :unicorn_config, "#{current_path}/config/unicorn.rb"
-set :unicorn_binary, "#{shared_path}/bin/bundle exec unicorn -c #{unicorn_config} -E #{rails_env} -D"
+set :unicorn_binary, "/home/rails/.rbenv/shims/bundle exec unicorn -c #{unicorn_config} -E #{rails_env} -D"
 set :unicorn_pid, "#{current_path}/tmp/pids/unicorn.pid"
 set :su_rails, "sudo -u #{user_rails}"
 
 # Sidekiq
 # set :sikekiq_pid, "#{current_path}/tmp/pids/sidekiq.pid"
-set :sidekiq_cmd, "#{shared_path}/bin/bundle exec sidekiq -r ./overalls.rb"
+set :sidekiq_cmd, "/home/deploy/.rbenv/shims/bundle exec sidekiq -r ./overalls.rb"
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
