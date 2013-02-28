@@ -2,6 +2,7 @@
 
 # Execute "bundle install" after deploy, but only when really needed
 require "bundler/capistrano"
+require "sidekiq/capistrano"
 
 # Application name
 set :application, "ember-repo-builder"
@@ -59,24 +60,23 @@ set :unicorn_pid, "#{current_path}/tmp/pids/unicorn.pid"
 set :su_rails, "sudo -u #{user_rails}"
 
 # Sidekiq
-set :sikekiq_pid, "#{current_path}/tmp/pids/sidekiq.pid"
-set :sikekiq_log, "#{current_path}/log/sidekiq.log"
-set :sidekiq_command, "bash -c 'source ~/.profile; bundle exec sidekiq -r ./overalls.rb -d -L #{sidekiq_log} -P #{sidekiq_pid}'"
+# set :sikekiq_pid, "#{current_path}/tmp/pids/sidekiq.pid"
+set :sidekiq_cmd, "bundle exec sidekiq -r ./overalls.rb"
 
 namespace :deploy do
   task :start, :roles => :app, :except => { :no_release => true } do
     # Start unicorn server using sudo (rails)
     run "cd #{current_path} && #{su_rails} #{unicorn_binary}"
-    run "cd #{current_path} && #{su_rails} #{sidekiq_binary}"
+    # run "cd #{current_path} && #{su_rails} #{sidekiq_binary}"
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "if [ -f #{sidekiq_pid} ]; then #{su_rails} kill `cat #{sidekiq_pid}`; fi"
+    # run "if [ -f #{sidekiq_pid} ]; then #{su_rails} kill `cat #{sidekiq_pid}`; fi"
     run "if [ -f #{unicorn_pid} ]; then #{su_rails} kill `cat #{unicorn_pid}`; fi"
   end
 
   task :graceful_stop, :roles => :app, :except => { :no_release => true } do
-    run "if [ -f #{sidekiq_pid} ]; then #{su_rails} kill -s USR1 `cat #{sidekiq_pid}`; fi"
+    # run "if [ -f #{sidekiq_pid} ]; then #{su_rails} kill -s USR1 `cat #{sidekiq_pid}`; fi"
     run "if [ -f #{unicorn_pid} ]; then #{su_rails} kill -s QUIT `cat #{unicorn_pid}`; fi"
   end
 
