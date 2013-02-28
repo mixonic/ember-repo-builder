@@ -15,7 +15,7 @@ class Overalls < Sinatra::Base
 
   helpers do
     def url_from_project(project_data, path)
-      ["http://#{ENV['S3_BUCKET']}.s3.amazonaws.com",
+      ["http://#{S3_BUCKET}.s3.amazonaws.com",
        "builds",
        project_data['name'],
        project_data['revision'],
